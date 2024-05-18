@@ -1,6 +1,8 @@
 "use client";
 import { GameStateEnum, useGameStore } from "@/zustand/store/game";
 import styles from "./board.module.css";
+import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 
 export function Board() {
   const {
@@ -22,9 +24,51 @@ export function Board() {
     [0, 0, 0, 0, 0, 0, 0],
   ];
 
-  const handleOnClick = () => {
+  const [visibleMoles, setVisibleMoles] = useState(
+    lv1.map((row) => row.map(() => false))
+  );
+
+  useEffect(() => {
+    if (gameState === GameStateEnum.PLAYING) {
+      const intervals = lv1.flatMap((row, i) =>
+        row.map((_, j) => {
+          return setInterval(() => {
+            setVisibleMoles((prev) => {
+              const newVisibleMoles = prev.map((row, rowIndex) =>
+                row.map((isVisible: boolean, colIndex: number) =>
+                  rowIndex === i && colIndex === j
+                    ? Math.random() < 0.5
+                    : isVisible
+                )
+              );
+              return newVisibleMoles;
+            });
+          }, Math.random() * 2000 + 500);
+        })
+      );
+
+      return () => {
+        intervals.forEach(clearInterval);
+      };
+    }
+
+    if (gameState === GameStateEnum.PAUSED) {
+      setVisibleMoles((prev) => prev.map((row) => row.map(() => false)));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gameState]);
+
+  const handleOnClick = (i: number, j: number) => {
     if (gameState !== GameStateEnum.PLAYING) return;
     setScore(score + 1);
+    setVisibleMoles((prev) => {
+      const newVisibleMoles = prev.map((row, rowIndex) =>
+        row.map((isVisible: boolean, colIndex: number) =>
+          rowIndex === i && colIndex === j ? false : isVisible
+        )
+      );
+      return newVisibleMoles;
+    });
   };
 
   const handlePlayGame = () => {
@@ -53,8 +97,17 @@ export function Board() {
 
               if (cell === 1) {
                 return (
-                  <div key={j} className={styles.hole} onClick={handleOnClick}>
-                    <span className={styles.mole}></span>
+                  <div key={j} className={styles.hole}>
+                    {GameStateEnum.PLAYING === gameState &&
+                      visibleMoles[i][j] && (
+                        <motion.span
+                          onClick={() => handleOnClick(i, j)}
+                          className={styles.mole}
+                          initial={{ scale: 0, y: 50 }}
+                          animate={{ scale: 1, y: 0 }}
+                          transition={{ duration: 0.5 }}
+                        ></motion.span>
+                      )}
                   </div>
                 );
               }
