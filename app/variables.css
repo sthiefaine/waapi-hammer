@@ -1,0 +1,32 @@
+:root {
+  /* Colors */
+  --color-bg-primary: rgb(221, 242, 255);
+  --color-bg-secondary: rgb(231, 246, 255);
+  --color-bg-tertiary: rgb(241, 250, 255);
+
+  --color-primary: rgb(102, 126, 234);
+  --color-secondary: rgb(49, 90, 231);
+  --color-tertiary: rgb(68, 178, 232);
+
+  --color-white: rgb(255, 255, 255);
+  --color-black: rgb(0, 0, 0);
+  --color-grey: rgb(174, 174, 174);
+
+  /* Fonts */
+  --font-primary: "Roboto", sans-serif;
+  --font-secondary: "Montserrat", sans-serif;
+
+  /* Font Sizes */
+  --font-size-xs: 0.75rem;
+
+  /* Font Weights */
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semi-bold: 600;
+  --font-weight-bold: 700;
+
+  /* Border Radius */
+  --border-radius: 12px;
+  --border-radius: 20px;
+}

@@ -1,0 +1,30 @@
+.header {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  background-color: var(--color-bg-secondary);
+  color: #fff;
+}
+
+.logo {
+  padding: 12px;
+}
+
+.informations {
+  margin-left: 40px;
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+
+  align-items: center;
+  gap: 20px;
+}
+
+.information {
+  width: 60px;
+  padding: 12px;
+  text-align: center;
+  border-radius: 12px;
+  background-color: var(--color-secondary);
+}
