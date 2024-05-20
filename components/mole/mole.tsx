@@ -8,7 +8,7 @@ import {
 } from "@/zustand/store/game";
 
 import Image from "next/image";
-import { playPunch1Sound } from "@/helpers/sounds";
+import { playPunchSound } from "@/helpers/sounds";
 import { randomIntFromInterval } from "@/helpers/numbers";
 
 type MoleProps = {
@@ -96,7 +96,7 @@ const Mole = ({ onWhack, points, delay, speed, pointsMin = 10 }: MoleProps) => {
 
   const whack = () => {
     if (gameState !== GameStateEnum.PLAYING) return;
-    playPunch1Sound();
+    playPunchSound();
     setWhacked(true);
     setPointsDisplay(pointsRef.current);
     setShowPoints(true);

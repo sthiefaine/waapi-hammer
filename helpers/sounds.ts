@@ -13,7 +13,7 @@ export const playStartSound = () => {
   playSound("/sounds/start.wav");
 };
 
-export const playPunchSound = (points: number) => {
+export const playPunchSound = (points?: number) => {
   playPopSound();
 };
 
