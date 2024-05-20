@@ -1,3 +1,4 @@
+"use client";
 import {
   GameStateEnum,
   gameConstants,
@@ -13,9 +14,13 @@ import { randomIntFromInterval } from "@/helpers/numbers";
 export const Countdown = () => {
   const { setGameState } = useGameStore();
   const [countdown, setCountdown] = useState(gameConstants.COUNTDOWN);
+  const [rotate, setRotate] = useState(0);
+  const [rotateOrigin, setRotateOrigin] = useState(0);
 
   useEffect(() => {
     if (countdown > 0) {
+      setRotate(randomIntFromInterval(-10, 10));
+      setRotateOrigin(randomIntFromInterval(-10, 10));
       playCountdownSound();
       const timeout = setTimeout(() => {
         setCountdown(countdown - 1000);
@@ -49,12 +54,12 @@ export const Countdown = () => {
         key={countdown}
         initial={{
           scale: 0.5,
-          rotate: randomIntFromInterval(-20, 20),
+          rotate: rotate,
           color: getColor(countdown / 1000),
         }}
         animate={{
           scale: 1,
-          rotate: randomIntFromInterval(-20, 20),
+          rotate: rotateOrigin,
           color: getColor(countdown / 1000),
         }}
         transition={{ duration: 1 }}

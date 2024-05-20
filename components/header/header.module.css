@@ -16,9 +16,7 @@
   width: 100%;
   display: flex;
   justify-content: flex-end;
-
   align-items: center;
-
   gap: 20px;
 }
 
@@ -30,6 +28,17 @@
   border-radius: 12px;
   background-color: var(--color-secondary);
   display: flex;
+  align-content: space-between;
+  justify-content: space-between;
+}
+
+.icon {
+  display: flex;
   align-items: center;
-  justify-content: space-around;
+  justify-content: center;
+}
+
+.number {
+  margin: 0 auto;
+  font-size: 1.1rem;
 }

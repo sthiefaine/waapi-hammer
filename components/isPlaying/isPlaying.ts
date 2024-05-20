@@ -29,10 +29,9 @@ export function IsPlaying() {
       switch (gameState) {
         case GameStateEnum.INIT:
           setTimeLeft(maxPlayTime);
+          setScore(0);
           break;
         case GameStateEnum.PLAYING: {
-          setScore(0);
-          setTimeLeft(maxPlayTime);
           break;
         }
         case GameStateEnum.END:
