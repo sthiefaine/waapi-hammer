@@ -38,7 +38,8 @@ const generateMoles = (amount: number) => {
 };
 
 export function Board() {
-  const { gameState, score, setScore, setTimeLeft, timeLeft } = useGameStore();
+  const { gameState, score, setScore, setTimeLeft, timeLeft, maxPlayTime } =
+    useGameStore();
   const [moles, setMoles] = useState(
     generateMoles(gameConstants.NUMBER_OF_MOLES)
   );
@@ -46,27 +47,14 @@ export function Board() {
     new Array(gameConstants.NUMBER_OF_HOLES).fill(null)
   );
 
-  const resetMole = (index: number) => {
-    const newMole = {
-      speed: gsap.utils.random(0.5, 1),
-      delay: gsap.utils.random(0.5, 4),
-      points: gameConstants.MOLE_SCORE,
-      image:
-        Math.random() < 0.2
-          ? bombsList[randomIntFromInterval(0, bombsList.length - 1)]
-          : imagesList[0],
-    };
-    setMoles((prevMoles) => {
-      const newMoles = [...prevMoles];
-      newMoles[index] = newMole;
-      return newMoles;
-    });
-  };
-
   const changeMole = (index: number) => {
+    const timeElapsed = (maxPlayTime - timeLeft) / maxPlayTime;
     const newMole = {
-      speed: gsap.utils.random(0.5, 1),
-      delay: gsap.utils.random(0.5, 4),
+      speed: gsap.utils.random(0.5, 1 - timeElapsed),
+      delay: gsap.utils.random(
+        0.5,
+        4 - timeElapsed * gameConstants.TIME_MULTIPLIER
+      ),
       points: gameConstants.MOLE_SCORE,
       image:
         Math.random() < 0.2
@@ -96,7 +84,7 @@ export function Board() {
       }
     }
     setTimeout(
-      () => resetMole(index),
+      () => changeMole(index),
       gsap.utils.random(200, 700),
       clearTimeout
     );

@@ -65,19 +65,14 @@ const Mole = ({
         yoyo: true,
         repeat: 1,
         delay: delay,
-        repeatDelay: delay,
-        repeatRefresh: true,
+        repeatDelay: delay / 4,
         onStart: () => {
           setAppearanceTime(Date.now());
         },
-        onRepeat: () => {
-          setTimeout(
-            () => {
-              changeMole();
-            },
-            500,
-            clearTimeout
-          );
+        onComplete: () => {
+          if (gameState === GameStateEnum.PLAYING) {
+            changeMole();
+          }
         },
       });
 
@@ -87,6 +82,7 @@ const Mole = ({
         }
       };
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pointsMin, delay, speed, image]);
 
   useEffect(() => {
@@ -131,7 +127,7 @@ const Mole = ({
     setPointsColor(
       pointColorsArray[randomIntFromInterval(0, pointColorsArray.length - 1)]
     );
-    setTimeout(() => setShowPoints(false), 1000);
+    setTimeout(() => setShowPoints(false), 700);
     onWhack(adjustedPoints, false, image.isBomb);
   };
 
@@ -153,7 +149,7 @@ const Mole = ({
         alt={image.alt}
         width={80}
         height={100}
-        className={styles.mole}
+        className={` ${styles.mole}`}
         ref={buttonRef}
         onClick={whack}
       />
