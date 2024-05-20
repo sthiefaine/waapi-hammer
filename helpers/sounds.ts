@@ -21,6 +21,10 @@ export const playPopSound = () => {
   playSound("/sounds/pop.mp3");
 };
 
+export const playHitBombSound = () => {
+  playSound("/sounds/popMetal.wav");
+};
+
 export const playPunchLootSound = () => {
   playSound("/sounds/punchWin.wav");
 };

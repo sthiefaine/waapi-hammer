@@ -6,18 +6,11 @@ import {
   gameConstants,
   useGameStore,
 } from "@/zustand/store/game";
-
 import Image from "next/image";
-import { playPunchSound } from "@/helpers/sounds";
+import { playHitBombSound, playPunchSound } from "@/helpers/sounds";
 import { randomIntFromInterval } from "@/helpers/numbers";
 
-type MoleProps = {
-  onWhack: (points: number, isGolden: boolean) => void;
-  points: number;
-  delay: number;
-  speed: number;
-  pointsMin?: number;
-};
+// EVERYTHING IS AWNESOME WITH COLORS !!!!!
 const pointColorsArray = [
   "#ffbe0b",
   "#fb5607",
@@ -26,7 +19,29 @@ const pointColorsArray = [
   "#06d6a0",
 ];
 
-const Mole = ({ onWhack, points, delay, speed, pointsMin = 10 }: MoleProps) => {
+type MoleProps = {
+  changeMole: () => void;
+  onWhack: (points: number, isGolden: boolean, isBomb: boolean) => void;
+  points: number;
+  delay: number;
+  speed: number;
+  pointsMin?: number;
+  image: {
+    img: string;
+    alt: string;
+    isBomb: boolean;
+  };
+};
+
+const Mole = ({
+  changeMole,
+  onWhack,
+  points,
+  delay,
+  speed,
+  pointsMin = 10,
+  image,
+}: MoleProps) => {
   const { gameState } = useGameStore();
   const [whacked, setWhacked] = useState(false);
   const bobRef = useRef<any>(null);
@@ -36,36 +51,51 @@ const Mole = ({ onWhack, points, delay, speed, pointsMin = 10 }: MoleProps) => {
   const [pointsDisplay, setPointsDisplay] = useState(0);
   const [pointsPosition, setPointsPosition] = useState("left");
   const [pointsColor, setPointsColor] = useState(pointColorsArray[0]);
+  const [appearanceTime, setAppearanceTime] = useState(0);
   useEffect(() => {
-    gsap.set(buttonRef.current, {
-      yPercent: 100,
-      display: "block",
-    });
-    bobRef.current = gsap.to(buttonRef.current, {
-      yPercent: 0,
-      duration: speed,
-      yoyo: true,
-      repeat: -1,
-      delay: delay,
-      repeatDelay: delay,
-      onRepeat: () => {
-        pointsRef.current = Math.floor(
-          Math.max(
-            pointsRef.current * gameConstants.POINTS_MULTIPLIER,
-            pointsMin
-          )
-        );
-      },
-    });
-    return () => {
-      if (bobRef.current) bobRef.current.kill();
-    };
-  }, [pointsMin, delay, speed]);
+    if (buttonRef.current) {
+      gsap.set(buttonRef.current, {
+        yPercent: 100,
+        display: "block",
+      });
+
+      bobRef.current = gsap.to(buttonRef.current, {
+        yPercent: 0,
+        duration: speed,
+        yoyo: true,
+        repeat: 1,
+        delay: delay,
+        repeatDelay: delay,
+        repeatRefresh: true,
+        onStart: () => {
+          setAppearanceTime(Date.now());
+        },
+        onRepeat: () => {
+          setTimeout(
+            () => {
+              changeMole();
+            },
+            500,
+            clearTimeout
+          );
+        },
+      });
+
+      return () => {
+        if (bobRef.current) {
+          bobRef.current.kill();
+        }
+      };
+    }
+  }, [pointsMin, delay, speed, image]);
 
   useEffect(() => {
     if (gameState === GameStateEnum.PAUSED || gameState === GameStateEnum.END) {
       bobRef.current.pause();
+    } else if (!whacked) {
+      bobRef.current.resume();
     }
+
     if (whacked) {
       pointsRef.current = points;
       bobRef.current.pause();
@@ -73,39 +103,36 @@ const Mole = ({ onWhack, points, delay, speed, pointsMin = 10 }: MoleProps) => {
         yPercent: 100,
         duration: 0.1,
         onComplete: () => {
-          gsap.delayedCall(gsap.utils.random(1, 4), () => {
-            setWhacked(false);
-            bobRef.current
-              .restart()
-              .timeScale(
-                bobRef.current.timeScale() * gameConstants.TIME_MULTIPLIER
-              );
-          });
+          setWhacked(false);
+          bobRef.current.kill();
         },
       });
     }
-  }, [whacked]);
-
-  useEffect(() => {
-    if (gameState === GameStateEnum.PAUSED || gameState === GameStateEnum.END) {
-      bobRef.current.pause();
-    } else {
-      bobRef.current.resume();
-    }
-  }, [gameState]);
+  }, [whacked, gameState, points]);
 
   const whack = () => {
     if (gameState !== GameStateEnum.PLAYING) return;
-    playPunchSound();
+
+    if (image.isBomb) {
+      playHitBombSound();
+    } else {
+      playPunchSound();
+    }
+
+    const clickTime = Date.now();
+    const reactionTime = (clickTime - appearanceTime) / 1000;
+    const adjustedPoints =
+      reactionTime < 1 ? 100 : points - Math.floor(reactionTime * 20);
+
     setWhacked(true);
-    setPointsDisplay(pointsRef.current);
+    setPointsDisplay(adjustedPoints);
     setShowPoints(true);
     setPointsPosition(Math.random() > 0.5 ? "left" : "right");
     setPointsColor(
       pointColorsArray[randomIntFromInterval(0, pointColorsArray.length - 1)]
     );
     setTimeout(() => setShowPoints(false), 1000);
-    onWhack(pointsRef.current, false);
+    onWhack(adjustedPoints, false, image.isBomb);
   };
 
   return (
@@ -122,14 +149,14 @@ const Mole = ({ onWhack, points, delay, speed, pointsMin = 10 }: MoleProps) => {
         </span>
       )}
       <Image
-        src="/targets/thief.png"
-        alt="mole"
+        src={image.img}
+        alt={image.alt}
         width={80}
         height={100}
         className={styles.mole}
         ref={buttonRef}
         onClick={whack}
-      ></Image>
+      />
     </div>
   );
 };
