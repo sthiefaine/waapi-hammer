@@ -2,38 +2,78 @@
 "use client";
 import { GameStateEnum, useGameStore } from "@/zustand/store/game";
 import { usePathname } from "next/navigation";
-import { use, useEffect } from "react";
+import { useEffect } from "react";
 
 export function IsPlaying() {
-  const { gameState, setGameState, setCurrentPlayTime, currentPlayTime } =
-    useGameStore();
+  const {
+    gameState,
+    setGameState,
+    setTimeLeft,
+    setScore,
+    setClearGameStore,
+    timeLeft,
+    maxPlayTime,
+  } = useGameStore();
   const pathName = usePathname();
 
   useEffect(() => {
     if (pathName === "/game") {
+      if (
+        gameState === GameStateEnum.END ||
+        gameState === GameStateEnum.RESET ||
+        gameState === GameStateEnum.NONE
+      ) {
+        setGameState(GameStateEnum.INIT);
+      }
+
+      switch (gameState) {
+        case GameStateEnum.INIT:
+          setTimeLeft(maxPlayTime);
+          break;
+        case GameStateEnum.PLAYING: {
+          setScore(0);
+          setTimeLeft(maxPlayTime);
+          break;
+        }
+        case GameStateEnum.END:
+          setGameState(GameStateEnum.END);
+          break;
+        case GameStateEnum.RESET: {
+          setClearGameStore();
+          setGameState(GameStateEnum.INIT);
+          setTimeLeft(maxPlayTime);
+          break;
+        }
+        case GameStateEnum.PAUSED: {
+          setGameState(GameStateEnum.PAUSED);
+          break;
+        }
+        default:
+          break;
+      }
     } else {
-      setGameState(GameStateEnum.INIT);
+      setGameState(GameStateEnum.NONE);
     }
   }, [pathName, setGameState, gameState]);
 
   useEffect(() => {
     if (gameState === GameStateEnum.PLAYING) {
-      if (currentPlayTime < 0) {
-        setCurrentPlayTime(0);
+      if (timeLeft < 0) {
+        setTimeLeft(0);
       }
       const interval = setInterval(() => {
-        if (currentPlayTime === 1) {
+        if (timeLeft === 1) {
           setGameState(GameStateEnum.END);
-          setCurrentPlayTime(0);
+          setTimeLeft(0);
           clearInterval(interval);
           return;
         }
-        setCurrentPlayTime(currentPlayTime - 1);
+        setTimeLeft(timeLeft - 1);
       }, 1000);
 
       return () => clearInterval(interval);
     }
-  }, [gameState, currentPlayTime, setCurrentPlayTime]);
+  }, [gameState, timeLeft, setTimeLeft]);
 
   return null;
 }

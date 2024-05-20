@@ -4,13 +4,14 @@ import styles from "./header.module.css";
 import Image from "next/image";
 import { GameStateEnum, useGameStore } from "@/zustand/store/game";
 import { usePathname } from "next/navigation";
+import { Timer } from "lucide-react";
 
 export function Header() {
-  const { score, currentPlayTime, gameState } = useGameStore();
+  const { score, timeLeft, gameState, debug } = useGameStore();
   const pathname = usePathname();
 
-  const isHomePage = gameState === GameStateEnum.END && pathname === "/";
-  const displayInformations = gameState !== GameStateEnum.INIT || isHomePage;
+  const isHomePage = pathname === "/";
+  const displayInformations = !isHomePage;
   return (
     <header className={styles.header}>
       <Link href="/">
@@ -29,14 +30,16 @@ export function Header() {
           color: "black",
         }}
       >
-        {gameState}
+        {debug && gameState}
       </span>
 
       {displayInformations && (
         <div className={styles.informations}>
           <span id="timer" className={styles.information}>
-            {" "}
-            {currentPlayTime}
+            <span className={styles.icon}>
+              <Timer />
+            </span>
+            <span className={styles.text}>: {timeLeft}</span>
           </span>
           <span id="score" className={styles.information}>
             {score}

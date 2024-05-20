@@ -1,135 +1,79 @@
 "use client";
-import { GameStateEnum, useGameStore } from "@/zustand/store/game";
+
+import {
+  GameStateEnum,
+  gameConstants,
+  useGameStore,
+} from "@/zustand/store/game";
+import React, { useState } from "react";
+import Mole from "../mole/mole";
 import styles from "./board.module.css";
-import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import confetti from "canvas-confetti";
+import gsap from "gsap";
+import InGameActionButton from "../InGameActionButton/inGameActionButton";
+import { Countdown } from "../countdown/countdown";
+
+const generateMoles = (amount: number) => {
+  return new Array(amount).fill(true).map((i) => ({
+    speed: gsap.utils.random(0.5, 1),
+    delay: gsap.utils.random(0.5, 4),
+    points: gameConstants.MOLE_SCORE,
+  }));
+};
 
 export function Board() {
-  const {
-    gameState,
-    score,
-    setScore,
-    setGameState,
-    setClearGameStore,
-    setCurrentPlayTime,
-  } = useGameStore();
+  const { gameState, score, setScore } = useGameStore();
 
-  const lv1 = [
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 1, 0, 1, 0, 1, 0],
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 1, 0, 1, 0, 1, 0],
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 1, 0, 1, 0, 1, 0],
-    [0, 0, 0, 0, 0, 0, 0],
-  ];
-
-  const [visibleMoles, setVisibleMoles] = useState(
-    lv1.map((row) => row.map(() => false))
+  const [moles, setMoles] = useState(
+    generateMoles(gameConstants.NUMBER_OF_MOLES)
   );
 
-  useEffect(() => {
-    if (gameState === GameStateEnum.PLAYING) {
-      const intervals = lv1.flatMap((row, i) =>
-        row.map((_, j) => {
-          return setInterval(() => {
-            setVisibleMoles((prev) => {
-              const newVisibleMoles = prev.map((row, rowIndex) =>
-                row.map((isVisible: boolean, colIndex: number) =>
-                  rowIndex === i && colIndex === j
-                    ? Math.random() < 0.5
-                    : isVisible
-                )
-              );
-              return newVisibleMoles;
-            });
-          }, Math.random() * 2000 + 500);
-        })
-      );
+  const [holes, setHoles] = useState(
+    new Array(gameConstants.NUMBER_OF_HOLES).fill(null)
+  );
 
-      return () => {
-        intervals.forEach(clearInterval);
-      };
+  const onWhack = (points: number, isGolden: boolean) => {
+    setScore(score + points);
+    if (isGolden) {
+      confetti();
     }
-
-    if (gameState === GameStateEnum.PAUSED) {
-      setVisibleMoles((prev) => prev.map((row) => row.map(() => false)));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gameState]);
-
-  const handleOnClick = (i: number, j: number) => {
-    if (gameState !== GameStateEnum.PLAYING) return;
-    setScore(score + 1);
-    setVisibleMoles((prev) => {
-      const newVisibleMoles = prev.map((row, rowIndex) =>
-        row.map((isVisible: boolean, colIndex: number) =>
-          rowIndex === i && colIndex === j ? false : isVisible
-        )
-      );
-      return newVisibleMoles;
-    });
-  };
-
-  const handlePlayGame = () => {
-    setGameState(GameStateEnum.PLAYING);
-  };
-
-  const handlePauseGame = () => {
-    setGameState(GameStateEnum.PAUSED);
-  };
-
-  const handleStartGame = () => {
-    setClearGameStore();
-    setGameState(GameStateEnum.PLAYING);
-    setCurrentPlayTime(30);
   };
 
   return (
-    <section className={styles.section}>
-      <div className={styles.gridContainer}>
-        {lv1.map((row, i) => (
-          <div key={i} className={styles.row}>
-            {row.map((cell, j) => {
-              if (cell === 0) {
-                return <div key={j} className={styles.cell}></div>;
-              }
-
-              if (cell === 1) {
-                return (
-                  <div key={j} className={styles.hole}>
-                    {GameStateEnum.PLAYING === gameState &&
-                      visibleMoles[i][j] && (
-                        <motion.span
-                          onClick={() => handleOnClick(i, j)}
-                          className={styles.mole}
-                          initial={{ scale: 0, y: 50 }}
-                          animate={{ scale: 1, y: 0 }}
-                          transition={{ duration: 0.5 }}
-                        ></motion.span>
-                      )}
+    <>
+      <>
+        <>
+          <section className={styles.section}>
+            <div className={styles.gridContainer}>
+              {holes.map((_, index) => (
+                <div key={index} className={styles.holeContainer}>
+                  <div className={styles.hole}>
+                    {" "}
+                    {gameState !== GameStateEnum.INIT && (
+                      <>
+                        <Mole
+                          key={index}
+                          onWhack={onWhack}
+                          points={moles[index].points}
+                          delay={moles[index].delay}
+                          speed={moles[index].speed}
+                        />{" "}
+                      </>
+                    )}
                   </div>
-                );
-              }
-            })}
-          </div>
-        ))}
-      </div>
-
-      <div className={styles.options}>
-        {(gameState === GameStateEnum.PAUSED ||
-          gameState === GameStateEnum.INIT) && (
-          <button onClick={() => handlePlayGame()}>Play</button>
-        )}
-
-        {gameState === GameStateEnum.PLAYING && (
-          <button onClick={() => handlePauseGame()}>Pause</button>
-        )}
-
-        {gameState === GameStateEnum.END && (
-          <button onClick={() => handleStartGame()}>Restart</button>
-        )}
-      </div>
-    </section>
+                </div>
+              ))}
+            </div>
+            {gameState === GameStateEnum.INIT && (
+              <>
+                {" "}
+                <Countdown />
+              </>
+            )}
+          </section>
+          <InGameActionButton />
+        </>
+      </>
+    </>
   );
 }
