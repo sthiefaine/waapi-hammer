@@ -22,6 +22,7 @@ export enum GameStateEnum {
   END = "END",
   FINISH = "FINISH",
   RESET = "RESET",
+  GAME_OVER = "GAME_OVER",
 }
 type GameState = {
   debug?: boolean;

@@ -39,6 +39,7 @@ export function Board() {
     timeLeft,
     maxPlayTime,
     setAnimateTime,
+    setGameState,
   } = useGameStore();
 
   const [moles, setMoles] = useState(
@@ -68,7 +69,7 @@ export function Board() {
       delay: gsap.utils.random(0.5, 4 - timeMultiplier * 3),
       points: gameConstants.MOLE_SCORE,
       imageData:
-        Math.random() < (timeMultiplier >= 0.8 ? 0.4 : timeMultiplier - 0.1)
+        Math.random() < (timeMultiplier >= 0.5 ? 0.25 : timeMultiplier - 0.2)
           ? bombsList[randomIntFromInterval(0, bombsList.length - 1)]
           : Math.random() > 0.985
           ? devPicture[0]
@@ -90,7 +91,11 @@ export function Board() {
     if (isBomb) {
       setScore(score - 200);
       setAnimateTime(true);
-      setTimeLeft(timeLeft - 1);
+
+      if (timeLeft - 1 <= 0) {
+        setTimeLeft(0);
+        setGameState(GameStateEnum.GAME_OVER);
+      }
     } else {
       if (isGolden) {
         setScore(score + gameConstants.GOLDEN_SCORE);
