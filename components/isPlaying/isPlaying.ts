@@ -25,7 +25,7 @@ export function IsPlaying() {
       ) {
         setGameState(GameStateEnum.INIT);
       }
-
+      console.log("gameState", gameState);
       switch (gameState) {
         case GameStateEnum.INIT:
           setTimeLeft(maxPlayTime);

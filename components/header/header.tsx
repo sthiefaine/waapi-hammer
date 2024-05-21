@@ -10,7 +10,8 @@ import { usePathname } from "next/navigation";
 import { Timer } from "lucide-react";
 
 export function Header() {
-  const { score, timeLeft, gameState, debug } = useGameStore();
+  const { score, timeLeft, gameState, debug, animateTime, setAnimateTime } =
+    useGameStore();
   const pathname = usePathname();
 
   const isHomePage = pathname === "/";
@@ -22,6 +23,10 @@ export function Header() {
   const timeRef = useRef<HTMLSpanElement>(null);
   const prevTimeRef = useRef(timeLeft);
   const timeAnimationRef = useRef<GSAPTimeline | null>(null);
+
+  useEffect(() => {
+    animateTime ? setAnimateTime(false) : null;
+  }, [animateTime, setAnimateTime]);
 
   useEffect(() => {
     if (scoreRef.current && prevScoreRef.current !== score) {
@@ -47,14 +52,15 @@ export function Header() {
   useEffect(() => {
     if (timeRef.current && prevTimeRef.current !== timeLeft) {
       if (gameState === GameStateEnum.PLAYING) {
-        if (timeLeft <= 10) {
+        const decrement = timeLeft < prevTimeRef.current;
+
+        if (timeLeft <= 10 || animateTime) {
           // Annuler toute animation de temps en cours
           if (timeAnimationRef.current) {
             timeAnimationRef.current.kill();
           }
 
           const tl = gsap.timeline();
-          const decrement = timeLeft < prevTimeRef.current;
 
           timeAnimationRef.current = tl
             .to(timeRef.current, {
@@ -64,7 +70,7 @@ export function Header() {
             })
             .to(timeRef.current, {
               scale: 1,
-              color: decrement ? "red" : "white",
+              color: decrement ? (animateTime ? "white" : "red") : "white",
               duration: 0.2,
             });
 
@@ -78,7 +84,7 @@ export function Header() {
         }
       }
     }
-  }, [timeLeft, gameState]);
+  }, [timeLeft, gameState, animateTime]);
 
   useEffect(() => {
     if (gameState === GameStateEnum.RESET || gameState === GameStateEnum.INIT) {

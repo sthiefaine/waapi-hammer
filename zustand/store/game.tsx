@@ -28,6 +28,7 @@ type GameState = {
   timeLeft: number;
   maxPlayTime: number;
   score: number;
+  animateTime?: boolean;
 };
 
 export type GameActions = {
@@ -36,6 +37,7 @@ export type GameActions = {
   setTimeLeft: (timeLeft: number) => void;
   setClearGameStore: () => void;
   setMaxPlayTime: (maxPlayTime: number) => void;
+  setAnimateTime: (animateTime: boolean) => void;
 };
 
 export type GameStore = GameState & GameActions;
@@ -46,6 +48,7 @@ export const defaultInitState: GameState = {
   timeLeft: 0,
   maxPlayTime: 30,
   score: 0,
+  animateTime: false,
 };
 
 export const useGameStore = create(
@@ -57,6 +60,7 @@ export const useGameStore = create(
       setTimeLeft: (timeLeft: number) => set({ timeLeft }),
       setClearGameStore: () => set(defaultInitState),
       setMaxPlayTime: (maxPlayTime: number) => set({ maxPlayTime }),
+      setAnimateTime: (animateTime: boolean) => set({ animateTime }),
     }),
     {
       name: "game-store",

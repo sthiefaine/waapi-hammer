@@ -26,10 +26,11 @@ type MoleProps = {
   delay: number;
   speed: number;
   pointsMin?: number;
-  image: {
+  imageData: {
     img: string;
     alt: string;
-    isBomb: boolean;
+    isBomb?: boolean;
+    isGolden?: boolean;
   };
 };
 
@@ -40,7 +41,7 @@ const Mole = ({
   delay,
   speed,
   pointsMin = 10,
-  image,
+  imageData,
 }: MoleProps) => {
   const { gameState } = useGameStore();
   const [whacked, setWhacked] = useState(false);
@@ -83,7 +84,7 @@ const Mole = ({
       };
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pointsMin, delay, speed, image]);
+  }, [pointsMin, delay, speed, imageData]);
 
   useEffect(() => {
     if (gameState === GameStateEnum.PAUSED || gameState === GameStateEnum.END) {
@@ -109,7 +110,7 @@ const Mole = ({
   const whack = () => {
     if (gameState !== GameStateEnum.PLAYING) return;
 
-    if (image.isBomb) {
+    if (imageData.isBomb) {
       playHitBombSound();
     } else {
       playPunchSound();
@@ -120,15 +121,44 @@ const Mole = ({
     const adjustedPoints =
       reactionTime < 1 ? 100 : points - Math.floor(reactionTime * 20);
 
+    const specialsPoints = {
+      golden: gameConstants.GOLDEN_SCORE,
+      bomb: -300,
+    };
+
+    const specialsColors = {
+      golden: "gold",
+      bomb: "red",
+    };
+
+    // COLOR DISPLAY
+    if (Boolean(imageData?.isBomb)) {
+      setPointsColor(specialsColors.bomb);
+    } else if (Boolean(imageData.isGolden)) {
+      setPointsColor(specialsColors.golden);
+    } else {
+      setPointsColor(
+        pointColorsArray[randomIntFromInterval(0, pointColorsArray.length - 1)]
+      );
+    }
+
+    // POINTS DISPLAY
+    if (Boolean(imageData?.isGolden)) {
+      setPointsDisplay(specialsPoints.golden);
+    } else if (Boolean(imageData?.isBomb)) {
+      setPointsDisplay(specialsPoints.bomb);
+    } else {
+      setPointsDisplay(pointsMin > adjustedPoints ? pointsMin : adjustedPoints);
+    }
     setWhacked(true);
-    setPointsDisplay(adjustedPoints);
     setShowPoints(true);
     setPointsPosition(Math.random() > 0.5 ? "left" : "right");
-    setPointsColor(
-      pointColorsArray[randomIntFromInterval(0, pointColorsArray.length - 1)]
-    );
     setTimeout(() => setShowPoints(false), 700);
-    onWhack(adjustedPoints, false, image.isBomb);
+    onWhack(
+      pointsDisplay,
+      Boolean(imageData?.isGolden),
+      Boolean(imageData?.isBomb)
+    );
   };
 
   return (
@@ -141,15 +171,16 @@ const Mole = ({
           }}
           className={styles.pointsDisplay}
         >
-          +{pointsDisplay}
+          {pointsDisplay > 0 ? "+" : null}
+          {pointsDisplay}
         </span>
       )}
       <Image
-        src={image.img}
-        alt={image.alt}
+        src={imageData.img}
+        alt={imageData.alt}
         width={80}
         height={100}
-        className={` ${styles.mole}`}
+        className={` ${styles.mole} ${imageData.isBomb ? null : null}`}
         ref={buttonRef}
         onClick={whack}
       />
