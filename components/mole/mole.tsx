@@ -10,7 +10,7 @@ import Image from "next/image";
 import { playHitBombSound, playPunchSound } from "@/helpers/sounds";
 import { randomIntFromInterval } from "@/helpers/numbers";
 
-// EVERYTHING IS AWNESOME WITH COLORS !!!!!
+// EVERYTHING IS AWESOME WITH COLORS !!!!!
 const pointColorsArray = [
   "#ffbe0b",
   "#fb5607",
@@ -57,7 +57,7 @@ const Mole = ({
 
   const [whacked, setWhacked] = useState(false);
   const [showPoints, setShowPoints] = useState(false);
-  const [pointsDisplay, setPointsDisplay] = useState(0);
+  const [pointsDisplay, setPointsDisplay] = useState(points);
   const [pointsPosition, setPointsPosition] = useState("left");
   const [pointsColor, setPointsColor] = useState("black");
   const [appearanceTime, setAppearanceTime] = useState(0);
@@ -120,8 +120,19 @@ const Mole = ({
     }
   }, [whacked, gameState, points]);
 
+  const calculatePoints = () => {
+    const clickTime = Date.now();
+    const reactionTime = (clickTime - appearanceTime) / 1000;
+    const adjustedPoints =
+      reactionTime < 1 ? 100 : points - Math.floor(reactionTime * 15);
+
+    return pointsMin > adjustedPoints ? pointsMin : adjustedPoints;
+  };
+
   const whack = () => {
     if (gameState !== GameStateEnum.PLAYING) return;
+
+    const calculatedPoints = calculatePoints();
 
     if (imageData.isBomb) {
       playHitBombSound();
@@ -129,46 +140,31 @@ const Mole = ({
       playPunchSound();
     }
 
-    // POINTS CALCULATION
-    // Calculate the time it took to click
-    // If the time is less than 1 second, give 100 points
-    // Otherwise, subtract 20 points for each second
-    // If the points are less than the minimum, give the minimum
-    const clickTime = Date.now();
-    const reactionTime = (clickTime - appearanceTime) / 1000;
-    const adjustedPoints =
-      reactionTime < 1 ? 100 : points - Math.floor(reactionTime * 20);
-
-    // COLOR DISPLAY
+    // Set points display and color
     if (Boolean(imageData?.isBomb)) {
       setPointsColor(specialsColors.bomb);
-    } else if (Boolean(imageData.isGolden)) {
+      setPointsDisplay(specialsPoints.bomb);
+    } else if (Boolean(imageData?.isGolden)) {
       setPointsColor(specialsColors.golden);
+      setPointsDisplay(specialsPoints.golden);
     } else {
       setPointsColor(
         pointColorsArray[randomIntFromInterval(0, pointColorsArray.length - 1)]
       );
-    }
-
-    // POINTS DISPLAY
-    if (Boolean(imageData?.isGolden)) {
-      setPointsDisplay(specialsPoints.golden);
-    } else if (Boolean(imageData?.isBomb)) {
-      setPointsDisplay(specialsPoints.bomb);
-    } else {
-      setPointsDisplay(pointsMin > adjustedPoints ? pointsMin : adjustedPoints);
+      setPointsDisplay(calculatedPoints);
     }
 
     setWhacked(true);
     setShowPoints(true);
     setPointsPosition(Math.random() > 0.5 ? "left" : "right");
-    setTimeout(() => setShowPoints(false), 700);
 
     onWhack(
-      pointsDisplay,
+      calculatedPoints,
       Boolean(imageData?.isGolden),
       Boolean(imageData?.isBomb)
     );
+
+    setTimeout(() => setShowPoints(false), 700);
   };
 
   return (

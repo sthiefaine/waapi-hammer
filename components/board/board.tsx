@@ -66,10 +66,10 @@ export function Board() {
 
     const newMole = {
       speed: gsap.utils.random(0.5, 2 - timeMultiplier),
-      delay: gsap.utils.random(0.5, 4 - timeMultiplier * 3),
+      delay: gsap.utils.random(0.5, 4 - timeMultiplier * 3.2),
       points: gameConstants.MOLE_SCORE,
       imageData:
-        Math.random() < (timeMultiplier >= 0.5 ? 0.25 : timeMultiplier - 0.2)
+        Math.random() < (timeMultiplier >= 0.5 ? 0.3 : timeMultiplier - 0.2)
           ? bombsList[randomIntFromInterval(0, bombsList.length - 1)]
           : Math.random() > 0.985
           ? devPicture[0]
