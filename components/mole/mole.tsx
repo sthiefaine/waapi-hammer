@@ -19,6 +19,16 @@ const pointColorsArray = [
   "#06d6a0",
 ];
 
+const specialsPoints = {
+  golden: gameConstants.GOLDEN_SCORE,
+  bomb: -200,
+};
+
+const specialsColors = {
+  golden: "gold",
+  bomb: "red",
+};
+
 type MoleProps = {
   changeMole: () => void;
   onWhack: (points: number, isGolden: boolean, isBomb: boolean) => void;
@@ -44,15 +54,18 @@ const Mole = ({
   imageData,
 }: MoleProps) => {
   const { gameState } = useGameStore();
+
   const [whacked, setWhacked] = useState(false);
-  const bobRef = useRef<any>(null);
-  const pointsRef = useRef(points);
-  const buttonRef = useRef(null);
   const [showPoints, setShowPoints] = useState(false);
   const [pointsDisplay, setPointsDisplay] = useState(0);
   const [pointsPosition, setPointsPosition] = useState("left");
-  const [pointsColor, setPointsColor] = useState(pointColorsArray[0]);
+  const [pointsColor, setPointsColor] = useState("black");
   const [appearanceTime, setAppearanceTime] = useState(0);
+
+  const bobRef = useRef<any>(null);
+  const pointsRef = useRef(points);
+  const buttonRef = useRef(null);
+
   useEffect(() => {
     if (buttonRef.current) {
       gsap.set(buttonRef.current, {
@@ -116,20 +129,15 @@ const Mole = ({
       playPunchSound();
     }
 
+    // POINTS CALCULATION
+    // Calculate the time it took to click
+    // If the time is less than 1 second, give 100 points
+    // Otherwise, subtract 20 points for each second
+    // If the points are less than the minimum, give the minimum
     const clickTime = Date.now();
     const reactionTime = (clickTime - appearanceTime) / 1000;
     const adjustedPoints =
       reactionTime < 1 ? 100 : points - Math.floor(reactionTime * 20);
-
-    const specialsPoints = {
-      golden: gameConstants.GOLDEN_SCORE,
-      bomb: -300,
-    };
-
-    const specialsColors = {
-      golden: "gold",
-      bomb: "red",
-    };
 
     // COLOR DISPLAY
     if (Boolean(imageData?.isBomb)) {
@@ -150,10 +158,12 @@ const Mole = ({
     } else {
       setPointsDisplay(pointsMin > adjustedPoints ? pointsMin : adjustedPoints);
     }
+
     setWhacked(true);
     setShowPoints(true);
     setPointsPosition(Math.random() > 0.5 ? "left" : "right");
     setTimeout(() => setShowPoints(false), 700);
+
     onWhack(
       pointsDisplay,
       Boolean(imageData?.isGolden),

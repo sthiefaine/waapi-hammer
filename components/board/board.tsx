@@ -13,45 +13,18 @@ import gsap from "gsap";
 import InGameActionButton from "../InGameActionButton/inGameActionButton";
 import { Countdown } from "../countdown/countdown";
 import { randomIntFromInterval } from "@/helpers/numbers";
-import { animate } from "framer-motion";
+import { ImageType, bombsList, devPicture, imagesList } from "@/data/images";
 
-const bombsList = [
-  { img: "/targets/bomb1.png", alt: "bomb", isBomb: true },
-  { img: "/targets/bomb2.png", alt: "bomb", isBomb: true },
-];
+type MoleType = {
+  speed: number;
+  delay: number;
+  points: number;
+  imageData: ImageType;
+};
 
-const devPicture = [
-  {
-    img: "/targets/thief.png",
-    alt: "developer picture thief",
-    isGolden: true,
-  },
-];
-
-const imgsData = [
-  { img: "/targets/waal/alex.webp", alt: "alex" },
-  { img: "/targets/waal/amandine.webp", alt: "amandine" },
-  { img: "/targets/waal/emile.webp", alt: "emile" },
-  { img: "/targets/waal/ophelie.webp", alt: "ophelie" },
-  { img: "/targets/waal/camila.webp", alt: "camila" },
-  { img: "/targets/waal/melisandre.webp", alt: "melisandre" },
-  { img: "/targets/waal/guillaume.webp", alt: "guillaume" },
-  { img: "/targets/waal/zoe.webp", alt: "zoe" },
-  { img: "/targets/waal/fabien.webp", alt: "fabien" },
-  { img: "/targets/waal/joanne.webp", alt: "joanne" },
-  { img: "/targets/waal/blessing.webp", alt: "blessing" },
-  { img: "/targets/waal/kevin.webp", alt: "kevin" },
-  { img: "/targets/waal/raphael.webp", alt: "raphael" },
-  { img: "/targets/waal/sasha.webp", alt: "sasha" },
-  { img: "/targets/waal/sofia.webp", alt: "sofia" },
-  { img: "/targets/waal/toinon.webp", alt: "toinon" },
-  { img: "/targets/waal/youri.webp", alt: "youri" },
-];
-
-const imagesList = [...imgsData];
-const generateMoles = (amount: number) => {
+const generateMoles = (amount: number): MoleType[] => {
   return new Array(amount).fill(true).map(() => ({
-    speed: gsap.utils.random(0.5, 2),
+    speed: gsap.utils.random(0.5, 3),
     delay: gsap.utils.random(0.5, 4),
     points: gameConstants.MOLE_SCORE,
     imageData: imagesList[randomIntFromInterval(0, imagesList.length - 1)],
@@ -67,6 +40,7 @@ export function Board() {
     maxPlayTime,
     setAnimateTime,
   } = useGameStore();
+
   const [moles, setMoles] = useState(
     generateMoles(gameConstants.NUMBER_OF_MOLES)
   );
@@ -83,10 +57,10 @@ export function Board() {
         : timeElapsed * gameConstants.TIME_MULTIPLIER;
 
     const newMole = {
-      speed: gsap.utils.random(0.5, 1 - timeElapsed),
+      speed: gsap.utils.random(0.5, 2 - timeElapsed),
       delay: gsap.utils.random(
         0.5,
-        4 - timeElapsed * gameConstants.TIME_MULTIPLIER
+        4.5 - timeElapsed * gameConstants.TIME_MULTIPLIER
       ),
       points: gameConstants.MOLE_SCORE,
       imageData:
@@ -110,7 +84,7 @@ export function Board() {
     index: number
   ) => {
     if (isBomb) {
-      setScore(score - 300);
+      setScore(score - 200);
       setAnimateTime(true);
       setTimeLeft(timeLeft - 1);
     } else {
@@ -125,15 +99,11 @@ export function Board() {
         setScore(score + points);
       }
     }
-    setTimeout(
-      () => changeMole(index),
-      gsap.utils.random(200, 400),
-      clearTimeout
-    );
+    setTimeout(() => changeMole(index), gsap.utils.random(100, 400));
   };
 
   useEffect(() => {
-    if (gameState === GameStateEnum.PLAYING) {
+    if (gameState === GameStateEnum.INIT) {
       setMoles(generateMoles(gameConstants.NUMBER_OF_MOLES));
     }
   }, [gameState]);
