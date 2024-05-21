@@ -14,6 +14,7 @@ import InGameActionButton from "../InGameActionButton/inGameActionButton";
 import { Countdown } from "../countdown/countdown";
 import { randomIntFromInterval } from "@/helpers/numbers";
 import { ImageType, bombsList, devPicture, imagesList } from "@/data/images";
+import PopUp from "../popUp/popUp";
 
 type MoleType = {
   speed: number;
@@ -117,6 +118,17 @@ export function Board() {
     }
   }, [gameState]);
 
+  const DisplayPopUP = () => {
+    if (
+      gameState === GameStateEnum.GAME_OVER ||
+      gameState === GameStateEnum.FINISH ||
+      gameState === GameStateEnum.END ||
+      gameState === GameStateEnum.PAUSED
+    ) {
+      return <PopUp />;
+    }
+  };
+
   return (
     <>
       <section className={styles.section}>
@@ -142,6 +154,8 @@ export function Board() {
           ))}
         </div>
         {gameState === GameStateEnum.INIT && <Countdown />}
+
+        <DisplayPopUP />
       </section>
       <InGameActionButton />
     </>

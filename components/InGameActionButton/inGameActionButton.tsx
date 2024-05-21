@@ -22,24 +22,6 @@ export default function InGameActionButton() {
           />
         </>
       )}
-      {gameState === GameStateEnum.END && (
-        <>
-          <Button
-            icon={<RotateCcw />}
-            text="Rejouer"
-            gameState={GameStateEnum.RESET}
-          />
-        </>
-      )}
-      {gameState === GameStateEnum.PAUSED && (
-        <>
-          <Button
-            icon={<Play />}
-            text="Reprendre"
-            gameState={GameStateEnum.PLAYING}
-          />
-        </>
-      )}
     </div>
   );
 }
