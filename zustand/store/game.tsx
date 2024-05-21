@@ -20,6 +20,7 @@ export enum GameStateEnum {
   PLAYING = "PLAYING",
   PAUSED = "PAUSED",
   END = "END",
+  FINISH = "FINISH",
   RESET = "RESET",
 }
 type GameState = {
@@ -63,7 +64,7 @@ export const useGameStore = create(
       setAnimateTime: (animateTime: boolean) => set({ animateTime }),
     }),
     {
-      name: "game-store",
+      name: "waapi-hammer-game-store",
       partialize: (state: GameStore) => ({
         gameState:
           state.gameState === GameStateEnum.PLAYING
@@ -83,7 +84,8 @@ export const useGameStore = create(
             }
             if (
               state?.timeLeft === 0 &&
-              state?.gameState !== GameStateEnum.END
+              state?.gameState !== GameStateEnum.END &&
+              state?.gameState !== GameStateEnum.FINISH
             ) {
               state.timeLeft = state.maxPlayTime;
             }

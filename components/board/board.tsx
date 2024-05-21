@@ -24,8 +24,8 @@ type MoleType = {
 
 const generateMoles = (amount: number): MoleType[] => {
   return new Array(amount).fill(true).map(() => ({
-    speed: gsap.utils.random(0.5, 3),
-    delay: gsap.utils.random(0.5, 4),
+    speed: gsap.utils.random(1, 2),
+    delay: gsap.utils.random(0.5, 3),
     points: gameConstants.MOLE_SCORE,
     imageData: imagesList[randomIntFromInterval(0, imagesList.length - 1)],
   }));
@@ -49,24 +49,28 @@ export function Board() {
   );
 
   const changeMole = (index: number) => {
+    // Calcule le temps écoulé en proportion du temps maximum de jeu
+    // ex 15 : ( 30s - 15s) / 30s = 0.5
+    // ex 5 : ( 30s - 5s) / 30s = 0.833
     const timeElapsed = (maxPlayTime - timeLeft) / maxPlayTime;
 
+    // Multiplie le temps écoulé par un multiplicateur de temps
+    // ex 15 : 0.5 * 1.2 = 0.6
+    // ex 5 : 0.833 * 1.2 = 1
+    // minumum 0.5
     const timeMultiplier =
-      timeElapsed * gameConstants.TIME_MULTIPLIER > 0.5
+      timeElapsed * gameConstants.TIME_MULTIPLIER < 0.5
         ? 0.5
         : timeElapsed * gameConstants.TIME_MULTIPLIER;
 
     const newMole = {
-      speed: gsap.utils.random(0.5, 2 - timeElapsed),
-      delay: gsap.utils.random(
-        0.5,
-        4.5 - timeElapsed * gameConstants.TIME_MULTIPLIER
-      ),
+      speed: gsap.utils.random(0.5, 2 - timeMultiplier),
+      delay: gsap.utils.random(0.5, 4 - timeMultiplier * 3),
       points: gameConstants.MOLE_SCORE,
       imageData:
-        Math.random() < timeMultiplier
+        Math.random() < (timeMultiplier >= 0.8 ? 0.4 : timeMultiplier - 0.1)
           ? bombsList[randomIntFromInterval(0, bombsList.length - 1)]
-          : Math.random() > 0.975
+          : Math.random() > 0.985
           ? devPicture[0]
           : imagesList[randomIntFromInterval(0, imagesList.length - 1)],
     };
