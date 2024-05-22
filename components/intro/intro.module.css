@@ -33,23 +33,16 @@
   line-height: 0.95;
   margin: 0 0 1rem 0;
   padding-top: 10px;
-  transform: rotate(1deg);
+  transform: rotate(-3deg);
   animation: fadeIn 1s ease-out;
 }
 
 .description {
-  -webkit-text-stroke: 0.1vmin var(--color-white);
-  font-size: 1.2rem;
-  font-weight: 900;
+  -webkit-text-stroke: 0.1vmin var(--color-black);
+  font-size: 1.3rem;
+  font-weight: 700;
   color: var(--color-secondary);
   margin-bottom: 2rem;
-  text-shadow: 3px 3px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000,
-    -1px 1px 0 #000, 1px 1px 0 #000;
-}
-
-.strong {
-  color: var(--color-tertiary);
-  font-weight: bold;
 }
 
 .warning {
@@ -59,7 +52,8 @@
     -1px 1px 0 #000, 1px 1px 0 #000;
   padding: 1rem;
   color: var(--color-orange);
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   text-transform: uppercase;
   line-height: 1.2rem;
+  font-size: bold;
 }
