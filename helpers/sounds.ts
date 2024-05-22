@@ -1,44 +1,24 @@
-let userInteracted = false;
+/* export const playCountdownSound = useAudio("/sounds/countdown.mp3");
+export const playStartSound = useAudio("/sounds/start.wav");
+export const playHitGoldenSound = useAudio("/sounds/hitGold.wav");
+export const playPopSound = useAudio("/sounds/pop.mp3");
+export const playHitBombSound = useAudio("/sounds/popMetal.wav");
+export const playPunchLootSound = useAudio("/sounds/punchWin.wav");
+export const playClickSound = useAudio("/sounds/click.mp3");
+export const playNewHihScoreSound = useAudio("/sounds/gg.wav");
+export const playPunchSound = useAudio("/sounds/pop.mp3");
+export const playSound = useAudio("/sounds/pop.mp3");
+export const playFinishSound = useAudio("/sounds/score.wav");
+ */
 
-// Ajoutez des écouteurs d'événements pour détecter l'interaction utilisateur
-document.addEventListener("click", () => (userInteracted = true), {
-  once: true,
-});
-document.addEventListener("keydown", () => (userInteracted = true), {
-  once: true,
-});
-
-export const playSound = (src: string, volume: number = 1) => {
-  if (!userInteracted) {
-    return;
-  }
-
-  const audio = new Audio(src);
-  // volume est un nombre entre 0 et 1
-  audio.volume = volume;
-  audio.play().catch((error) => {});
-};
-
-export const playCountdownSound = () => {
-  playSound("/sounds/countdown.mp3", 0.1);
-};
-
-export const playStartSound = () => {
-  playSound("/sounds/start.wav");
-};
-
-export const playPunchSound = (points?: number) => {
-  playPopSound();
-};
-
-export const playPopSound = () => {
-  playSound("/sounds/pop.mp3");
-};
-
-export const playHitBombSound = () => {
-  playSound("/sounds/popMetal.wav");
-};
-
-export const playPunchLootSound = () => {
-  playSound("/sounds/punchWin.wav");
-};
+export const playCountdownSound = "/sounds/countdown.mp3";
+export const playStartSound = "/sounds/start.wav";
+export const playHitGoldenSound = "/sounds/hitGold.wav";
+export const playPopSound = "/sounds/pop.mp3";
+export const playHitBombSound = "/sounds/popMetal.wav";
+export const playPunchLootSound = "/sounds/punchWin.wav";
+export const playClickSound = "/sounds/click.mp3";
+export const playNewHihScoreSound = "/sounds/gg.wav";
+export const playPunchSound = "/sounds/pop.mp3";
+export const playSound = "/sounds/pop.mp3";
+export const playFinishSound = "/sounds/score.wav";

@@ -1,0 +1,115 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+}
+
+.title {
+  padding: 20px;
+  margin: 20px;
+  font-size: 2.2em;
+  font-weight: 900;
+  text-transform: uppercase;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  -webkit-text-stroke: 0.1vmin var(--color-white);
+  letter-spacing: 4px;
+  text-shadow: 3px 3px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000,
+    -1px 1px 0 #000, 1px 1px 0 #000;
+}
+
+.section {
+  overflow: hidden;
+  flex-grow: 1;
+  width: 100%;
+  background-color: var(--color-bg-tertiary);
+}
+
+.card {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  height: 50px;
+  margin: 20px;
+  padding: 10px;
+  background-color: var(--color-bg-secondary);
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.number {
+  display: block;
+  font-size: 1.2rem;
+
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  width: 50px;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.score {
+  display: block;
+  font-size: 1.2rem;
+  flex-grow: 1;
+  width: 80%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 900;
+  font-size: 2rem;
+  color: var(--color-secondary);
+  -webkit-text-stroke: 0.1vmin var(--color-black);
+  letter-spacing: 4px;
+  text-shadow: -3px -3px 0 var(--color-white), -1px -1px 0 var(--color-white),
+    1px -1px 0 var(--color-white), -1px 1px 0 var(--color-white),
+    1px 1px 0 var(--color-white);
+}
+
+.name {
+  font-size: 0.9rem;
+  height: 20%;
+
+  margin-right: 5px;
+  font-weight: 600;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  text-align: right;
+}
+
+.name p {
+  width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.word {
+  line-height: 1.2;
+}
+
+.letter {
+  display: inline-block;
+}
+
+.reflect {
+  -webkit-mask: linear-gradient(-60deg, #000 30%, #0005, #000 70%) right/300%
+    100%;
+  mask: linear-gradient(-60deg, #000 30%, #0005, #000 70%) right/300% 100%;
+  background-repeat: no-repeat;
+  animation: reflect 1.2s infinite;
+  font-size: 50px;
+}
+
+@keyframes reflect {
+  100% {
+    -webkit-mask-position: left;
+  }
+}

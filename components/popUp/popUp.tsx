@@ -1,11 +1,24 @@
-import { GameStateEnum, useGameStore } from "@/zustand/store/game";
+import {
+  GameStateEnum,
+  gameConstants,
+  useGameStore,
+} from "@/zustand/store/game";
 import styles from "./popUp.module.css";
-import { use, useEffect, useState } from "react";
-import { Button } from "../button/button";
+import { useEffect, useState } from "react";
+import { Button, HighScoresSubmit } from "../button/button";
 import { Play, RotateCcw } from "lucide-react";
+import { HighScoreForm } from "../form/highScore";
+import { playFinishSound, playNewHihScoreSound } from "@/helpers/sounds";
 
 export function PopUp() {
-  const { gameState, score } = useGameStore();
+  const {
+    gameState,
+    score,
+    isHighScore,
+    highScoreSubmitted,
+    setSoundSrc,
+    soundSrc,
+  } = useGameStore();
 
   const [text, setText] = useState("");
 
@@ -29,14 +42,67 @@ export function PopUp() {
     }
   }, [gameState]);
 
+  useEffect(() => {
+    if (
+      gameState === GameStateEnum.FINISH &&
+      isHighScore &&
+      !highScoreSubmitted
+    ) {
+      setSoundSrc(playNewHihScoreSound);
+    } else if (
+      gameState === GameStateEnum.FINISH &&
+      !isHighScore &&
+      !highScoreSubmitted
+    ) {
+      setSoundSrc(playFinishSound);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isHighScore, highScoreSubmitted]);
+
+  const DisplayHighScore = () => {
+    const text = ["Nouveau", "Record !"];
+
+    if (isHighScore) {
+      return (
+        <h1 className={styles.titlehighscore}>
+          {text.map((word, index) => (
+            <span key={index} className={styles.word} data-word={word}>
+              {word.split("").map((letter, index) => (
+                <span
+                  key={index}
+                  className={styles.letter}
+                  style={{
+                    color: `hsl(calc((360 / 13) * ${index}), 70%, 65%)`,
+                    animation: `jump 0.4s calc(${
+                      !!(index % 2) ? 0.1 : 0.13
+                    } * -1s) infinite`,
+                  }}
+                >
+                  {letter}
+                </span>
+              ))}
+            </span>
+          ))}
+        </h1>
+      );
+    }
+  };
+
   return (
     <div className={styles.popUp}>
+      {" "}
       <div className={styles.header}>
-        <h2 className={styles.title}>{text}</h2>
-        <p>Score: {score}</p>
+        {isHighScore && <DisplayHighScore />}
+        {!isHighScore && (
+          <>
+            <h2 className={styles.title}>{text}</h2>
+            <p>Score: {score}</p>
+          </>
+        )}
       </div>
       <div className={styles.body}>
-        <div className={styles.text}></div>
+        {gameState === GameStateEnum.FINISH &&
+          score >= gameConstants.MINIMUM_SCORE && <HighScoreForm />}
       </div>
       <div className={styles.footer}>
         {gameState === GameStateEnum.END && (
@@ -73,6 +139,7 @@ export function PopUp() {
               text="Rejouer"
               gameState={GameStateEnum.RESET}
             />
+            {score >= gameConstants.MINIMUM_SCORE && <HighScoresSubmit />}
           </>
         )}
       </div>

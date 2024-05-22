@@ -2,11 +2,13 @@
   position: relative;
   flex-grow: 1;
   display: flex;
+  max-width: 100vw;
+  min-height: 500px;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
   background-color: hsl(98, 40%, 50%);
-  perspective: 1000px;
+  overflow: hidden;
 }
 
 .section::before {
@@ -21,13 +23,12 @@
 
 .gridContainer {
   display: grid;
-  row-gap: 20px;
+
   grid-template-columns: repeat(3, 1fr);
   justify-content: flex-start;
   align-content: center;
-  width: 100%;
+  width: 90%;
   height: 90%;
-  transform-style: preserve-3d;
 }
 
 .holeContainer {
@@ -35,22 +36,28 @@
   flex-direction: column;
   align-items: center;
   height: 80px;
-  transform-style: preserve-3d;
   position: relative;
 }
-
 .holeContainer:nth-child(1),
 .holeContainer:nth-child(2),
 .holeContainer:nth-child(3) {
-  transform: translateZ(-150px) scale(0.8);
+  transform: translate(0%, -30%) scale(0.6);
 }
 
 .holeContainer:nth-child(4),
 .holeContainer:nth-child(5),
 .holeContainer:nth-child(6) {
-  transform: translateZ(-100px) scale(0.9);
+  transform: translate(0%, -40%) scale(0.7);
 }
+
+.holeContainer:nth-child(7),
+.holeContainer:nth-child(8),
+.holeContainer:nth-child(9) {
+  transform: translate(0%, 0%) scale(1);
+}
+
 .hole {
+  cursor: crosshair;
   height: 100%;
   width: 100%;
   overflow: hidden;
@@ -59,25 +66,28 @@
 }
 
 .mole {
+  cursor: crosshair;
   object-fit: cover;
   aspect-ratio: 1/1;
   margin: 0 auto;
 }
 
 .moleContainer {
-  margin: 0 auto;
   position: relative;
 }
 
 .pointsDisplay {
-  -webkit-text-stroke: 0.1vmin var(--color-black);
-  font-size: 1rem;
+  font-size: 1.9rem;
   position: fixed;
   top: 0px;
-  font-weight: bold;
+  font-weight: 900;
   pointer-events: none;
   animation: fadeOut 1s ease-out;
+  -webkit-text-stroke: 0.1vmin var(--color-black);
   opacity: 0;
+  text-shadow: 3px 3px 0 var(--color-white), -1px -1px 0 var(--color-white),
+    1px -1px 0 var(--color-white), -1px 1px 0 var(--color-white),
+    1px 1px 0 var(--color-white);
 }
 
 @keyframes fadeOut {
@@ -87,7 +97,7 @@
   }
   100% {
     opacity: 0;
-    transform: translateY(-20px);
+    transform: translateY(-70px);
   }
 }
 
@@ -97,6 +107,11 @@
   width: 100%;
   height: 100%;
   background: radial-gradient(
+    ellipse at center,
+    rgb(32, 21, 8) 0%,
+    hsl(35, 40%, 20%) 100%
+  );
+  background: -webkit-radial-gradient(
     ellipse at center,
     rgb(32, 21, 8) 0%,
     hsl(35, 40%, 20%) 100%

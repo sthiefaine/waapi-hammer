@@ -1,11 +1,13 @@
 .popUp {
   position: absolute;
-  top: 20%;
+  bottom: 20px;
   width: 80%;
   max-width: 500px;
-  min-height: 300px;
+  height: 350px;
+  min-height: 350px;
+  max-height: 350px;
   background-color: rgba(255, 255, 255, 0.9);
-  padding: 20px;
+  padding: 0 20px 0 20px;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   z-index: 1000;
@@ -18,17 +20,38 @@
 .header {
   font-size: 1.5rem;
   font-weight: bold;
-  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .title {
   font-size: 1.2rem;
-  margin-bottom: 10px;
+}
+
+.titlehighscore {
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  display: flex;
+  flex-direction: column;
+  font-size: 2rem;
+  -webkit-text-stroke: 0.1vmin var(--color-white);
+  letter-spacing: 4px;
+  text-shadow: 3px 3px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000,
+    -1px 1px 0 #000, 1px 1px 0 #000;
+}
+
+.word {
+  display: blo;
+  line-height: 1.2;
+}
+
+.letter {
+  display: inline-block;
 }
 
 .body {
   font-size: 1rem;
-  margin-bottom: 10px;
 }
 
 .text {
@@ -37,7 +60,10 @@
 }
 
 .footer {
+  padding-top: 20px;
   display: flex;
-  justify-content: space-between;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 10px;
   width: 100%;
 }

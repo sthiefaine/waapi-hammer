@@ -20,6 +20,27 @@
   gap: 20px;
 }
 
+.scaleAnimate {
+  color: white;
+  transition: transform 0.2s ease-in-out, color 0.2s ease-in-out;
+  transform: scale(1.4);
+}
+
+.scaleUp {
+  transform: scale(1.2);
+  transition: transform 0.2s ease-in-out;
+}
+
+.greenText {
+  color: green;
+  transition: color 0.2s ease-in-out;
+}
+
+.redText {
+  color: red;
+  transition: color 0.2s ease-in-out;
+}
+
 .information {
   height: 20px;
   width: 60px;

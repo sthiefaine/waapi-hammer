@@ -1,106 +1,88 @@
+// Dans votre composant React
 "use client";
 import React, { useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import styles from "./header.module.css";
-import { GameStateEnum, useGameStore } from "@/zustand/store/game";
-
-import gsap from "gsap";
-import { usePathname } from "next/navigation";
+import { GameStateEnum } from "@/zustand/store/game";
 import { Timer } from "lucide-react";
+import { useGameStore } from "@/zustand/store/game";
+import { usePathname } from "next/navigation";
 
 export function Header() {
   const { score, timeLeft, gameState, debug, animateTime, setAnimateTime } =
-    useGameStore();
+    useGameStore((state) => state);
   const pathname = usePathname();
 
-  const isHomePage = pathname === "/";
-  const displayInformations = !isHomePage;
+  const displayInformations = pathname === "/game";
 
   const scoreRef = useRef<HTMLSpanElement>(null);
   const prevScoreRef = useRef(score);
 
   const timeRef = useRef<HTMLSpanElement>(null);
   const prevTimeRef = useRef(timeLeft);
-  const timeAnimationRef = useRef<GSAPTimeline | null>(null);
-
-  useEffect(() => {
-    animateTime ? setAnimateTime(false) : null;
-  }, [animateTime, setAnimateTime]);
 
   useEffect(() => {
     if (scoreRef.current && prevScoreRef.current !== score) {
       if (gameState === GameStateEnum.PLAYING) {
-        const tl = gsap.timeline();
-        const increment = score > prevScoreRef.current;
+        scoreRef.current.classList.remove(styles.scaleUp);
+        scoreRef.current.classList.remove(styles.greenText);
+        scoreRef.current.classList.remove(styles.redText);
 
-        tl.to(scoreRef.current, {
-          scale: 1.4,
-          color: increment ? "green" : "red",
-          duration: 0.2,
-        }).to(scoreRef.current, {
-          scale: 1,
-          color: "white",
-          duration: 0.2,
-        });
+        scoreRef.current.classList.add(styles.scaleUp);
 
-        prevScoreRef.current = score;
+        if (score > prevScoreRef.current) {
+          scoreRef.current.classList.add(styles.greenText);
+        } else if (score < prevScoreRef.current) {
+          scoreRef.current.classList.add(styles.redText);
+        }
+
+        setTimeout(() => {
+          scoreRef.current?.classList.remove(styles.scaleUp);
+          scoreRef.current?.classList.remove(styles.greenText);
+          scoreRef.current?.classList.remove(styles.redText);
+        }, 250);
       }
+
+      prevScoreRef.current = score;
     }
   }, [gameState, score]);
 
   useEffect(() => {
     if (timeRef.current && prevTimeRef.current !== timeLeft) {
       if (gameState === GameStateEnum.PLAYING) {
-        const decrement = timeLeft < prevTimeRef.current;
+        timeRef.current.classList.remove(styles.scaleUp);
+        timeRef.current.classList.remove(styles.greenText);
+        timeRef.current.classList.remove(styles.redText);
 
-        if (timeLeft <= 10 || animateTime) {
-          // Annuler toute animation de temps en cours
-          if (timeAnimationRef.current) {
-            timeAnimationRef.current.kill();
-          }
+        const timeDifference = timeLeft - prevTimeRef.current;
 
-          const tl = gsap.timeline();
-
-          timeAnimationRef.current = tl
-            .to(timeRef.current, {
-              scale: 1.4,
-              color: decrement ? "red" : "green",
-              duration: 0.2,
-            })
-            .to(timeRef.current, {
-              scale: 1,
-              color: decrement ? (animateTime ? "white" : "red") : "white",
-              duration: 0.2,
-            });
-
-          // Mettre à jour prevTimeRef après l'animation
-          tl.eventCallback("onComplete", () => {
-            prevTimeRef.current = timeLeft;
-            timeAnimationRef.current = null;
-          });
+        if (timeLeft <= 10) {
+          timeRef.current.classList.add(styles.redText);
+          timeRef.current.classList.add(styles.scaleUp);
         } else {
-          prevTimeRef.current = timeLeft;
+          if (timeDifference >= 1 || animateTime === "+") {
+            timeRef.current.classList.add(styles.greenText);
+            timeRef.current.classList.add(styles.scaleUp);
+            setAnimateTime("");
+          } else if (timeDifference > -1 || animateTime === "-") {
+            timeRef.current.classList.add(styles.redText);
+            timeRef.current.classList.add(styles.scaleUp);
+            setAnimateTime("");
+          } else {
+          }
         }
-      }
-    }
-  }, [timeLeft, gameState, animateTime]);
 
-  useEffect(() => {
-    if (gameState === GameStateEnum.RESET || gameState === GameStateEnum.INIT) {
-      if (timeRef.current) {
-        gsap.to(timeRef.current, {
-          color: "white",
-          scale: 1,
-          duration: 0.2,
-        });
-        prevTimeRef.current = timeLeft;
+        setTimeout(() => {
+          timeRef.current?.classList.remove(styles.scaleUp);
+          timeRef.current?.classList.remove(styles.greenText);
+          timeRef.current?.classList.remove(styles.redText);
+        }, 250);
       }
-      if (scoreRef.current) {
-        prevScoreRef.current = score;
-      }
+
+      prevTimeRef.current = timeLeft;
     }
-  }, [gameState, timeLeft, score]);
+  }, [timeLeft, gameState]);
 
   return (
     <header className={styles.header}>
@@ -129,7 +111,7 @@ export function Header() {
             <span className={styles.icon}>
               <Timer />:
             </span>
-            <span ref={timeRef} className={styles.number}>
+            <span ref={timeRef} className={`${styles.number}`}>
               {timeLeft}
             </span>{" "}
           </span>

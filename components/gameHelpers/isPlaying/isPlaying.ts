@@ -1,8 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
-import { GameStateEnum, useGameStore } from "@/zustand/store/game";
+import { useGameStore } from "@/zustand/store/game";
+import { GameStateEnum } from "@/zustand/store/game";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
+import { useAudio } from "../../../hooks/useAudio";
 
 export function IsPlaying() {
   const {
@@ -13,6 +15,11 @@ export function IsPlaying() {
     setClearGameStore,
     timeLeft,
     maxPlayTime,
+    setHighScoreSubmitted,
+    localHighScore,
+    setLocalHighScore,
+    setIsHighScore,
+    score,
   } = useGameStore();
   const pathName = usePathname();
 
@@ -25,11 +32,12 @@ export function IsPlaying() {
       ) {
         setGameState(GameStateEnum.INIT);
       }
-      console.log("gameState", gameState);
       switch (gameState) {
         case GameStateEnum.INIT:
           setTimeLeft(maxPlayTime);
           setScore(0);
+          setHighScoreSubmitted(false);
+          setIsHighScore(false);
           break;
         case GameStateEnum.PLAYING: {
           break;
@@ -56,13 +64,20 @@ export function IsPlaying() {
   }, [pathName, setGameState, gameState]);
 
   useEffect(() => {
+    if (score > localHighScore) {
+      setLocalHighScore(score);
+      setIsHighScore(true);
+    }
     if (gameState === GameStateEnum.PLAYING) {
       if (timeLeft < 0) {
         setTimeLeft(0);
       }
+
+      if (timeLeft === 0) {
+        setGameState(GameStateEnum.FINISH);
+      }
       const interval = setInterval(() => {
         if (timeLeft === 1) {
-          setGameState(GameStateEnum.END);
           setTimeLeft(0);
           clearInterval(interval);
           return;

@@ -47,7 +47,7 @@ export function Board() {
     generateMoles(gameConstants.NUMBER_OF_MOLES)
   );
   const [holes, setHoles] = useState(
-    new Array(gameConstants.NUMBER_OF_HOLES).fill(null)
+    new Array(gameConstants.NUMBER_OF_HOLES).fill(true)
   );
 
   const changeMole = (index: number) => {
@@ -91,18 +91,18 @@ export function Board() {
   ) => {
     if (isBomb) {
       setScore(score - 200);
-      setAnimateTime(true);
+      setAnimateTime("-");
+      setTimeLeft(timeLeft - 1);
 
       if (timeLeft - 1 <= 0) {
         setTimeLeft(0);
-        setGameState(GameStateEnum.GAME_OVER);
+        setGameState(GameStateEnum.FINISH);
       }
     } else {
       if (isGolden) {
         setScore(score + gameConstants.GOLDEN_SCORE);
-        setAnimateTime(true);
+
         setTimeLeft(timeLeft + 2);
-        confetti();
       }
 
       if (!isGolden) {
@@ -118,16 +118,25 @@ export function Board() {
     }
   }, [gameState]);
 
-  const DisplayPopUP = () => {
+  const displayPopUp =
+    gameState === GameStateEnum.GAME_OVER ||
+    gameState === GameStateEnum.FINISH ||
+    gameState === GameStateEnum.END ||
+    gameState === GameStateEnum.PAUSED;
+
+  useEffect(() => {
     if (
-      gameState === GameStateEnum.GAME_OVER ||
-      gameState === GameStateEnum.FINISH ||
-      gameState === GameStateEnum.END ||
-      gameState === GameStateEnum.PAUSED
+      displayPopUp &&
+      gameState === GameStateEnum.FINISH &&
+      score >= gameConstants.MINIMUM_SCORE
     ) {
-      return <PopUp />;
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+      });
     }
-  };
+  }, [gameState]);
 
   return (
     <>
@@ -153,9 +162,8 @@ export function Board() {
             </div>
           ))}
         </div>
+        {displayPopUp && <PopUp />}
         {gameState === GameStateEnum.INIT && <Countdown />}
-
-        <DisplayPopUP />
       </section>
       <InGameActionButton />
     </>

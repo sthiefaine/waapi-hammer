@@ -1,14 +1,17 @@
 import React, { useState, useEffect, useRef } from "react";
 import styles from "../board/board.module.css";
 import gsap from "gsap";
-import {
-  GameStateEnum,
-  gameConstants,
-  useGameStore,
-} from "@/zustand/store/game";
+import { GameStateEnum, gameConstants } from "@/zustand/store/game";
 import Image from "next/image";
-import { playHitBombSound, playPunchSound } from "@/helpers/sounds";
+
 import { randomIntFromInterval } from "@/helpers/numbers";
+import { useGameStore } from "@/zustand/store/game";
+import { useAudio } from "../../hooks/useAudio";
+import {
+  playHitBombSound,
+  playHitGoldenSound,
+  playPunchSound,
+} from "@/helpers/sounds";
 
 // EVERYTHING IS AWESOME WITH COLORS !!!!!
 const pointColorsArray = [
@@ -53,7 +56,7 @@ const Mole = ({
   pointsMin = 10,
   imageData,
 }: MoleProps) => {
-  const { gameState } = useGameStore();
+  const { gameState, setSoundSrc } = useGameStore();
 
   const [whacked, setWhacked] = useState(false);
   const [showPoints, setShowPoints] = useState(false);
@@ -100,7 +103,11 @@ const Mole = ({
   }, [pointsMin, delay, speed, imageData]);
 
   useEffect(() => {
-    if (gameState === GameStateEnum.PAUSED || gameState === GameStateEnum.END) {
+    if (
+      gameState === GameStateEnum.PAUSED ||
+      gameState === GameStateEnum.END ||
+      gameState === GameStateEnum.FINISH
+    ) {
       bobRef.current.pause();
     } else if (!whacked) {
       bobRef.current.resume();
@@ -135,9 +142,11 @@ const Mole = ({
     const calculatedPoints = calculatePoints();
 
     if (imageData.isBomb) {
-      playHitBombSound();
+      setSoundSrc(playHitBombSound);
+    } else if (imageData.isGolden) {
+      setSoundSrc(playHitGoldenSound);
     } else {
-      playPunchSound();
+      setSoundSrc(playPunchSound);
     }
 
     // Set points display and color
@@ -164,7 +173,7 @@ const Mole = ({
       Boolean(imageData?.isBomb)
     );
 
-    setTimeout(() => setShowPoints(false), 700);
+    setTimeout(() => setShowPoints(false), 900);
   };
 
   return (
@@ -173,7 +182,7 @@ const Mole = ({
         <span
           style={{
             color: pointsRef.current > 0 ? pointsColor : "red",
-            left: pointsPosition === "left" ? "15px" : "85px",
+            left: pointsPosition === "left" ? "15px" : "95px",
           }}
           className={styles.pointsDisplay}
         >

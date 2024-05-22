@@ -8,11 +8,12 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
 import styles from "./countdown.module.css";
-import { playCountdownSound, playStartSound } from "@/helpers/sounds";
+
 import { randomIntFromInterval } from "@/helpers/numbers";
+import { playCountdownSound, playStartSound } from "@/helpers/sounds";
 
 export const Countdown = () => {
-  const { setGameState } = useGameStore();
+  const { setGameState, setSoundSrc } = useGameStore();
   const [countdown, setCountdown] = useState(gameConstants.COUNTDOWN);
   const [rotate, setRotate] = useState(0);
   const [rotateOrigin, setRotateOrigin] = useState(0);
@@ -21,21 +22,22 @@ export const Countdown = () => {
     if (countdown > 0) {
       setRotate(randomIntFromInterval(-10, 10));
       setRotateOrigin(randomIntFromInterval(-10, 10));
-      playCountdownSound();
+      setSoundSrc(playCountdownSound);
+
       const timeout = setTimeout(() => {
         setCountdown(countdown - 1000);
       }, 1000);
       return () => clearTimeout(timeout);
     } else if (countdown === 0) {
-      playStartSound();
+      setSoundSrc(playStartSound);
       setGameState(GameStateEnum.PLAYING);
     }
-  }, [countdown]);
+  }, [countdown, setGameState, setSoundSrc]);
 
   const getColor = (countdownValue: number) => {
     switch (countdownValue) {
       case 3:
-        return "rgb(255, 255, 0)";
+        return "rgb(102, 126, 234)";
       case 2:
         return "rgb(49, 90, 231)";
       case 1:
