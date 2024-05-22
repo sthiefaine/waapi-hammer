@@ -193,6 +193,7 @@ const Mole = ({
       <Image
         src={imageData.img}
         alt={imageData.alt}
+        priority={true}
         width={80}
         height={100}
         className={` ${styles.mole} ${imageData.isBomb ? null : null}`}
