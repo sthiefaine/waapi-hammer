@@ -38,6 +38,7 @@ export default function InGameActionButton() {
       {gameState === GameStateEnum.PLAYING && (
         <>
           <motion.div
+            style={{ width: "100%" }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
@@ -50,6 +51,7 @@ export default function InGameActionButton() {
           </motion.div>
 
           <motion.div
+            style={{ width: "100%" }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
