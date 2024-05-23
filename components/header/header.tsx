@@ -8,6 +8,7 @@ import { GameStateEnum } from "@/zustand/store/game";
 import { Timer } from "lucide-react";
 import { useGameStore } from "@/zustand/store/game";
 import { usePathname } from "next/navigation";
+import { motion } from "framer-motion";
 
 export function Header() {
   const { score, timeLeft, gameState, debug, animateTime, setAnimateTime } =
@@ -82,6 +83,7 @@ export function Header() {
 
       prevTimeRef.current = timeLeft;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timeLeft, gameState]);
 
   return (
@@ -107,19 +109,31 @@ export function Header() {
 
       {displayInformations && (
         <div className={styles.informations}>
-          <span id="timer" className={styles.information}>
-            <span className={styles.icon}>
-              <Timer />:
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8 }}
+          >
+            <span id="timer" className={styles.information}>
+              <span className={styles.icon}>
+                <Timer />:
+              </span>
+              <span ref={timeRef} className={`${styles.number}`}>
+                {timeLeft}
+              </span>{" "}
             </span>
-            <span ref={timeRef} className={`${styles.number}`}>
-              {timeLeft}
-            </span>{" "}
-          </span>
-          <span id="score" className={styles.information}>
-            <span ref={scoreRef} className={styles.number}>
-              {score}
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8 }}
+          >
+            <span id="score" className={styles.information}>
+              <span ref={scoreRef} className={styles.number}>
+                {score}
+              </span>
             </span>
-          </span>
+          </motion.div>
         </div>
       )}
     </header>

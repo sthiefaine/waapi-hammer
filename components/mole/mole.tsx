@@ -82,12 +82,13 @@ const Mole = ({
         yoyo: true,
         repeat: 1,
         delay: delay,
-        repeatDelay: delay / 4,
+        repeatDelay: delay / 10,
         onStart: () => {
           setAppearanceTime(Date.now());
         },
         onComplete: () => {
           if (gameState === GameStateEnum.PLAYING) {
+            bobRef.current.kill();
             changeMole();
           }
         },
@@ -131,7 +132,7 @@ const Mole = ({
     const clickTime = Date.now();
     const reactionTime = (clickTime - appearanceTime) / 1000;
     const adjustedPoints =
-      reactionTime < 1 ? 100 : points - Math.floor(reactionTime * 15);
+      reactionTime < 1 ? 100 : points - Math.floor(reactionTime * 10);
 
     return pointsMin > adjustedPoints ? pointsMin : adjustedPoints;
   };
@@ -182,7 +183,7 @@ const Mole = ({
         <span
           style={{
             color: pointsRef.current > 0 ? pointsColor : "red",
-            left: pointsPosition === "left" ? "15px" : "95px",
+            left: pointsPosition === "left" ? "5px" : "45px",
           }}
           className={styles.pointsDisplay}
         >

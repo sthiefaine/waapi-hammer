@@ -136,6 +136,7 @@ export function Board() {
         origin: { y: 0.6 },
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameState]);
 
   return (

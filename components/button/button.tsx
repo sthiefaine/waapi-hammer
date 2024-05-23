@@ -3,6 +3,7 @@ import { CircleArrowUp, Eye } from "lucide-react";
 import styles from "./button.module.css";
 import { GameStateEnum, useGameStore } from "@/zustand/store/game";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 
 type ButtonProps = {
   icon: React.ReactNode;

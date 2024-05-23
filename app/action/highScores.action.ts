@@ -1,5 +1,6 @@
 "use server";
 import prisma from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 export async function fetchHighScores() {
@@ -60,7 +61,7 @@ export async function addHighScore(
     });
 
     if (result) {
-      // revalidatePath("/highscores", "page");
+      revalidatePath("/highscores", "page");
       return {
         name: result.name,
         success: true,

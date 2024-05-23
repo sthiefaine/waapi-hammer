@@ -1,8 +1,7 @@
+"use server";
 import { fetchHighScores } from "../action/highScores.action";
 
 import styles from "./page.module.css";
-
-export const dynamic = "force-dynamic";
 
 const getData = async () => {
   const items = await fetchHighScores();
