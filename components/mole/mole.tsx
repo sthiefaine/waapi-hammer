@@ -6,12 +6,12 @@ import Image from "next/image";
 
 import { randomIntFromInterval } from "@/helpers/numbers";
 import { useGameStore } from "@/zustand/store/game";
-import { useAudio } from "../../hooks/useAudio";
 import {
   playHitBombSound,
   playHitGoldenSound,
   playPunchSound,
 } from "@/helpers/sounds";
+import { useShallow } from "zustand/react/shallow";
 
 // EVERYTHING IS AWESOME WITH COLORS !!!!!
 const pointColorsArray = [
@@ -56,7 +56,14 @@ const Mole = ({
   pointsMin = 10,
   imageData,
 }: MoleProps) => {
-  const { gameState, setSoundSrc } = useGameStore();
+  const { gameState, setSoundSrc } = useGameStore(
+    useShallow((state) => {
+      return {
+        gameState: state.gameState,
+        setSoundSrc: state.setSoundSrc,
+      };
+    })
+  );
 
   const [whacked, setWhacked] = useState(false);
   const [showPoints, setShowPoints] = useState(false);

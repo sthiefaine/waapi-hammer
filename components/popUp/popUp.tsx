@@ -9,16 +9,21 @@ import { Button, HighScoresSubmit } from "../button/button";
 import { Play, RotateCcw } from "lucide-react";
 import { HighScoreForm } from "../form/highScore";
 import { playFinishSound, playNewHihScoreSound } from "@/helpers/sounds";
+import { useShallow } from "zustand/react/shallow";
 
 export function PopUp() {
-  const {
-    gameState,
-    score,
-    isHighScore,
-    highScoreSubmitted,
-    setSoundSrc,
-    soundSrc,
-  } = useGameStore();
+  const { gameState, score, isHighScore, highScoreSubmitted, setSoundSrc } =
+    useGameStore(
+      useShallow((state) => {
+        return {
+          gameState: state.gameState,
+          score: state.score,
+          isHighScore: state.isHighScore,
+          highScoreSubmitted: state.highScoreSubmitted,
+          setSoundSrc: state.setSoundSrc,
+        };
+      })
+    );
 
   const [text, setText] = useState("");
 

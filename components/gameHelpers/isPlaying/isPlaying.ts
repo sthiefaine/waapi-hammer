@@ -20,7 +20,20 @@ export function IsPlaying() {
     setLocalHighScore,
     setIsHighScore,
     score,
-  } = useGameStore();
+  } = useGameStore((state) => ({
+    gameState: state.gameState,
+    setGameState: state.setGameState,
+    setTimeLeft: state.setTimeLeft,
+    setScore: state.setScore,
+    setClearGameStore: state.setClearGameStore,
+    timeLeft: state.timeLeft,
+    maxPlayTime: state.maxPlayTime,
+    setHighScoreSubmitted: state.setHighScoreSubmitted,
+    localHighScore: state.localHighScore,
+    setLocalHighScore: state.setLocalHighScore,
+    setIsHighScore: state.setIsHighScore,
+    score: state.score,
+  }));
   const pathName = usePathname();
 
   useEffect(() => {

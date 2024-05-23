@@ -6,7 +6,7 @@ export function Intro({ children }: { children: React.ReactNode }) {
     <section className={style.section}>
       <h1 className={style.title}>Complètement marteau !</h1>
       <p className={style.description}>
-        Marque le <strong className={style.strong}>maxium de points</strong> en
+        Marque le <strong className={style.strong}>maximum de points</strong> en
         évitant <strong className={style.strong}>les bombes 💣</strong>
       </p>
       <div className={style.container}>{children}</div>
