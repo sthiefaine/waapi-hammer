@@ -4,8 +4,9 @@ import { addHighScore } from "@/app/action/highScores.action";
 import { useFormState } from "react-dom";
 
 import styles from "./highScore.module.css";
-import { useEffect } from "react";
+import { use, useEffect } from "react";
 import { useGameStore } from "@/zustand/store/game";
+import { useShallow } from "zustand/react/shallow";
 
 const initialState = {
   message: "",
@@ -18,7 +19,17 @@ export function HighScoreForm() {
     userName,
     setHighScoreSubmitted,
     highScoreSubmitted,
-  } = useGameStore();
+  } = useGameStore(
+    useShallow((state) => {
+      return {
+        score: state.score,
+        setUserName: state.setUserName,
+        userName: state.userName,
+        setHighScoreSubmitted: state.setHighScoreSubmitted,
+        highScoreSubmitted: state.highScoreSubmitted,
+      };
+    })
+  );
 
   const addHighScoreWithValues = addHighScore.bind(null, {
     score,
@@ -36,6 +47,7 @@ export function HighScoreForm() {
         }
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formState]);
 
   if (highScoreSubmitted) {

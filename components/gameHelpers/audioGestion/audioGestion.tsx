@@ -1,13 +1,22 @@
 "use client";
 import { useGameStore } from "@/zustand/store/game";
 import { useEffect, useRef, useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 // AudioGestion est un composant qui permet de gérer la lecture des sons
 // cela à été créee pour éviter les problèmes de lecture audio sur IOS
 // sur IOS le delay de lecture audio est plus long
 // voire de faire crasher le navigateur
 export function AudioGestion() {
-  const { sound, soundSrc, setSoundSrc } = useGameStore();
+  const { sound, soundSrc, setSoundSrc } = useGameStore(
+    useShallow((state) => {
+      return {
+        sound: state.sound,
+        soundSrc: state.soundSrc,
+        setSoundSrc: state.setSoundSrc,
+      };
+    })
+  );
   const [userInteracted, setUserInteracted] = useState(false);
   const [isSafariOnIPad, setIsSafariOnIPad] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);

@@ -3,6 +3,8 @@ import { CircleArrowUp, Eye } from "lucide-react";
 import styles from "./button.module.css";
 import { GameStateEnum, useGameStore } from "@/zustand/store/game";
 import { useRouter } from "next/navigation";
+import { useShallow } from "zustand/react/shallow";
+import { use } from "react";
 
 type ButtonProps = {
   icon: React.ReactNode;
@@ -19,7 +21,13 @@ export function Button({
   gameState,
   shake = false,
 }: ButtonProps) {
-  const { setGameState } = useGameStore();
+  const { setGameState } = useGameStore(
+    useShallow((state) => {
+      return {
+        setGameState: state.setGameState,
+      };
+    })
+  );
 
   const handleOnClick = () => {
     if (onClick) {
@@ -44,7 +52,13 @@ export function Button({
 
 export function HighScoresSubmit() {
   const router = useRouter();
-  const { highScoreSubmitted } = useGameStore((state) => state);
+  const { highScoreSubmitted } = useGameStore(
+    useShallow((state) => {
+      return {
+        highScoreSubmitted: state.highScoreSubmitted,
+      };
+    })
+  );
 
   const handleNavigateHighScores = () => {
     router.push("/highscores");

@@ -1,8 +1,11 @@
 import { useGameStore } from "@/zustand/store/game";
 import { useEffect, useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 export const useAudio = (src: string, volume = 1) => {
-  const { sound } = useGameStore();
+  const { sound } = useGameStore(
+    useShallow((state) => ({ sound: state.sound }))
+  );
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
   useEffect(() => {
     if (!sound) return;

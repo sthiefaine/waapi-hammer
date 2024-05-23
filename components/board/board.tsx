@@ -15,7 +15,7 @@ import { Countdown } from "../countdown/countdown";
 import { randomIntFromInterval } from "@/helpers/numbers";
 import { ImageType, bombsList, devPicture, imagesList } from "@/data/images";
 import PopUp from "../popUp/popUp";
-
+import { useShallow } from "zustand/react/shallow";
 type MoleType = {
   speed: number;
   delay: number;
@@ -41,7 +41,20 @@ export function Board() {
     maxPlayTime,
     setAnimateTime,
     setGameState,
-  } = useGameStore();
+  } = useGameStore(
+    useShallow((state) => {
+      return {
+        gameState: state.gameState,
+        score: state.score,
+        setScore: state.setScore,
+        setTimeLeft: state.setTimeLeft,
+        timeLeft: state.timeLeft,
+        maxPlayTime: state.maxPlayTime,
+        setAnimateTime: state.setAnimateTime,
+        setGameState: state.setGameState,
+      };
+    })
+  );
 
   const [moles, setMoles] = useState(
     generateMoles(gameConstants.NUMBER_OF_MOLES)

@@ -9,10 +9,20 @@ import { Timer } from "lucide-react";
 import { useGameStore } from "@/zustand/store/game";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
+import { useShallow } from "zustand/react/shallow";
 
 export function Header() {
   const { score, timeLeft, gameState, debug, animateTime, setAnimateTime } =
-    useGameStore((state) => state);
+    useGameStore(
+      useShallow((state) => ({
+        score: state.score,
+        timeLeft: state.timeLeft,
+        gameState: state.gameState,
+        debug: state.debug,
+        animateTime: state.animateTime,
+        setAnimateTime: state.setAnimateTime,
+      }))
+    );
   const pathname = usePathname();
 
   const displayInformations = pathname === "/game";

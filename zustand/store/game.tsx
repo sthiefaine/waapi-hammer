@@ -1,6 +1,6 @@
 "use client";
 import { animate } from "framer-motion";
-import { create } from "zustand";
+import { create, createStore } from "zustand";
 import { persist } from "zustand/middleware";
 
 export const gameConstants = {
@@ -81,6 +81,7 @@ export const defaultState: GameDefaultState = {
   sound: true,
 };
 
+// we need use shallow to prevent re-rendering
 export const useGameStore = create(
   persist(
     (set, get) => ({
@@ -142,8 +143,8 @@ export const useGameStore = create(
 
 // SAME BUT NEED A PROVIDER TO WORK
 // Path: zustand/store/game.tsx
-// Thats was for testing purposes
-/* export const createGameStore = (initState: GameState = defaultInitState) => {
+/* 
+export const createGameStore = (initState: GameState = defaultInitState) => {
   return createStore<GameStore>()(
     persist(
       (set, get) => ({
@@ -154,7 +155,7 @@ export const useGameStore = create(
         setTimeLeft: (timeLeft: number) => set({ timeLeft }),
         setClearGameStore: () => set(defaultInitState),
         setMaxPlayTime: (maxPlayTime: number) => set({ maxPlayTime }),
-        setAnimateTime: (animateTime: boolean) => set({ animateTime }),
+        setAnimateTime: (animateTime: AnimateTime) => set({ animateTime }),
         setUserName: (userName: string) => set({ userName }),
         setHighScoreSubmitted: (highScoreSubmitted: boolean) =>
           set({ highScoreSubmitted }),
@@ -196,11 +197,11 @@ export const useGameStore = create(
               if (state?.gameState === GameStateEnum.FINISH) {
                 state.gameState = GameStateEnum.END;
               }
-              console.log("rehydrated state", state);
             }
           };
         },
       }
     )
   );
-}; */
+};
+ */

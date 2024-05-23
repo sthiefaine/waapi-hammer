@@ -27,7 +27,7 @@ export const GameStoreProvider = ({ children }: GameStoreProviderProps) => {
   );
 };
 
-export const useGameStore = <T,>(
+/* export const useGameStore = <T,>(
   selector: (store: GameStore & any) => T
 ): T => {
   const gameStoreContext = useContext(GameStoreContext);
@@ -38,3 +38,4 @@ export const useGameStore = <T,>(
 
   return useStore(gameStoreContext, selector);
 };
+ */

@@ -11,9 +11,17 @@ import styles from "./countdown.module.css";
 
 import { randomIntFromInterval } from "@/helpers/numbers";
 import { playCountdownSound, playStartSound } from "@/helpers/sounds";
+import { useShallow } from "zustand/react/shallow";
 
 export const Countdown = () => {
-  const { setGameState, setSoundSrc } = useGameStore();
+  const { setGameState, setSoundSrc } = useGameStore(
+    useShallow((state) => {
+      return {
+        setGameState: state.setGameState,
+        setSoundSrc: state.setSoundSrc,
+      };
+    })
+  );
   const [countdown, setCountdown] = useState(gameConstants.COUNTDOWN);
   const [rotate, setRotate] = useState(0);
   const [rotateOrigin, setRotateOrigin] = useState(0);
